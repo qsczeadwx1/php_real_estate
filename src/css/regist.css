@@ -1,0 +1,24 @@
+.display_none {
+    display: none;
+}
+
+li {
+    list-style: none;
+}
+.color {
+    color: gray;
+}
+
+.regist_option {
+    cursor: pointer;
+}
+
+#registSeller, #registUser {
+    display: none;
+}
+
+.error_message {
+    color: rgb(250, 73, 73);
+    font-size: 13px;
+    font-weight: 700;
+}
