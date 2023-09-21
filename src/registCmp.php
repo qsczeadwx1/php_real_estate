@@ -11,7 +11,7 @@
 <?php include_once("./layout/header.php"); ?>
 
 <h2>회원가입 완료</h2>
-<a href="">로그인하러 가기</a>
+<a href="./login.php">로그인하러 가기</a>
 
 
 

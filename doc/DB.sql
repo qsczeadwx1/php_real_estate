@@ -51,7 +51,7 @@ CREATE TABLE `subways` (
 );
 
 CREATE TABLE `state_option` (
-    `s_no` INT(11) AUTO_INCREMENT PRIMARY KEY,
+    `s_no` INT(11) PRIMARY KEY,
     `s_parking` ENUM('0','1') NOT NULL default('0'),
     `s_ele` ENUM('0','1') NOT NULL default('0')
 );
@@ -60,7 +60,6 @@ CREATE TABLE `s_img` (
     `p_no` INT(11) AUTO_INCREMENT,
     `s_no` INT(11),
     `url` VARCHAR(255) NOT NULL,
-    `hashname` VARCHAR(255) NOT NULL,
     `originalname` VARCHAR(255) NOT NULL,
     `thumbnail` ENUM('0','1') DEFAULT('0') NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

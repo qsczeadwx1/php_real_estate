@@ -2,6 +2,11 @@
     define( "ROOT", $_SERVER["DOCUMENT_ROOT"]."/src/");
     include_once(ROOT."/common/pdo.php");
 
+    // 로그인상태면 메인으로 반환
+if(isset($_SESSION["u_id"])) {
+    header("Location: main.php");
+}
+
     $http_method = $_SERVER["REQUEST_METHOD"];
 
     if( $http_method === "POST" )

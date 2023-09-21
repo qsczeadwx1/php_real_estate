@@ -28,7 +28,7 @@
          약관에 동의합니다.
       </label>
       <br>
-      <a href="registUser" id="registUser"><button>회원가입</button></a>
+      <a href="./registUser.php" id="registUser"><button>회원가입</button></a>
    </div>
 
    <div id="seller_regist" class="display_none">
@@ -42,7 +42,7 @@
       </label>
       <br>
       
-      <a href="registSeller" id="registSeller"><button>회원가입</button></a>
+      <a href="./registSeller.php" id="registSeller"><button>회원가입</button></a>
    </div>
 
    <?php include_once("./layout/footer.php"); ?>

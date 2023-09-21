@@ -47,10 +47,12 @@ function insert_user($param_arr)
     }
     $sql .= " ); ";
 
+    // 비밀번호 해싱
+    $password = password_hash($param_arr["pw"], PASSWORD_DEFAULT);
 
     $prepare = [
         ":u_id" => $param_arr["id"]
-        , ":u_password" => $param_arr["pw"]
+        , ":u_password" => $password
         , ":email" => $param_arr["email"]
         , ":name" => $param_arr["name"]
         , ":phone_no" => $param_arr["phone_no"]
@@ -85,28 +87,358 @@ function insert_user($param_arr)
 
     return $result_cnt;
 }
-// function insert_usera($param)
-// {
 
-//     db_conn($conn);
+/**
+ * 함수명 : get_user
+ * 기능 : 유저 정보 획득
+ * 파라미터 : $id | string
+ * 리턴 값 : 획득 성공시 $result | array (유저정보) | 실패시 에러메세지
+ */
+function get_user($id)
+{
+    $sql = " SELECT "
+        ." * "
+        ." FROM "
+        ." user "
+        ." WHERE "
+        ." u_id "
+        ." = "
+        ." :u_id "
+        ;
 
-//     // 데이터베이스에 데이터 입력
-//     try {
-//         $sql = "INSERT INTO users (id, pw, email, name, ...) VALUES (:id, :pw, :email, :name, ...)";
-//         $stmt = $conn->prepare($sql);
+        $prepare = [
+          ":u_id" => $id 
+        ];
+        $conn = null;
+        try {
+            db_conn($conn);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($prepare);
+            $result = $stmt->fetch();
+            return $result;
+        } catch(Exception $e) {
+            return $e->getMessage();
+        } finally {
+        $conn = null;
+        }
 
-//         $stmt->bindParam(':id', $id);
+}
 
-//         $stmt->execute();
+/**
+ * 함수명 : get_user_no
+ * 기능 : 유저 정보 획득
+ * 파라미터 : $no | string
+ * 리턴 값 : 획득 성공시 $result | array (유저정보) | 실패시 에러메세지
+ */
+function get_user_no($no)
+{
+    $sql = " SELECT "
+        ." * "
+        ." FROM "
+        ." user "
+        ." WHERE "
+        ." u_no "
+        ." = "
+        ." :u_no "
+        ;
 
-//         echo "회원가입 성공!";
-//     } catch (PDOException $e) {
-//         echo "오류: " . $e->getMessage();
-//     }
-// }
-// 데이터베이스 연결
+        $prepare = [
+          ":u_no" => $no
+        ];
+        $conn = null;
+        try {
+            db_conn($conn);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($prepare);
+            $result = $stmt->fetch();
+            return $result;
+        } catch(Exception $e) {
+            return $e->getMessage();
+        } finally {
+        $conn = null;
+        }
+
+}
 
 
 
+/**
+ * 함수명 : login_user
+ * 기능 : 로그인
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : 성공시 true | 실패시 에러메세지
+ */
+function login_user($param_arr)
+{
+    $sql = " SELECT "
+    ." * "
+    ." FROM "
+    ." user "
+    ." WHERE "
+    ." u_id "
+    ." = "
+    ." :u_id "
+    ;
+
+    $prepare = [
+        ":u_id" => $param_arr["id"]  
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetch();
+        // 아이디가 없는 경우
+        if (!$result) {
+            throw new Exception("없는 아이디 입니다. 아이디를 확인해 주세요.");
+        }
+        // 아이디가 있으면 비밀번호 확인
+        if (password_verify($param_arr["pw"], $result["u_password"])) {
+            return true;
+        } else {
+            throw new Exception("비밀번호가 일치하지 않습니다.");
+        }
+
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : insert_estate
+ * 기능 : 매물작성
+ * 파라미터 : $param_info | array(건물정보), $param_img | array(이미지정보)
+ * 리턴 값 : 성공시 true | 실패시 에러메세지
+ */
+function insert_estate($param_info, $param_img) {
+    // 매물 작성한 유저 id로 u_no 받아옴
+    $get_user_no = get_user($param_info["u_id"]);
+
+    $sql = " INSERT INTO "
+    . " s_info( "
+    . " u_no "
+    . " ,s_name "
+    . " ,s_option "
+    . " ,s_type "
+    . " ,s_size "
+    . " ,s_fl "
+    . " ,s_stai "
+    . " ,s_add "
+    . " ,s_log "
+    . " ,s_lat "
+    . " ,p_deposit "
+    . " ,animal_size "
+    . " ,created_at "
+    . " ,updated_at "
+    ;
+    if (isset($param_info["p_month"])) {
+    $sql .= " ,p_month ";
+    }
+    $sql .= " ) "
+    . " VALUES( "
+    . " :u_no "
+    . " ,:s_name "
+    . " ,:s_option "
+    . " ,:s_type "
+    . " ,:s_size "
+    . " ,:s_fl "
+    . " ,:s_stai "
+    . " ,:s_add "
+    . " ,:s_log "
+    . " ,:s_lat "
+    . " ,:p_deposit "
+    . " ,:animal_size "
+    . " ,:created_at "
+    . " ,:updated_at ";
+    if (isset($param_info["p_month"])) {
+    $sql .= " ,:p_month ";
+    }
+    $sql .= " ); ";
+
+$prepare = [
+    ":u_no" => $get_user_no["u_no"]
+    , ":s_name" => $param_info["s_name"]
+    , ":s_option" => $param_info["s_option"]
+    , ":s_type" => $param_info["s_type"]
+    , ":s_size" => intval($param_info["s_size"])
+    , ":s_fl" => intval($param_info["s_fl"])
+    , ":s_stai" => $param_info["s_stai"]
+    , ":s_add" => $param_info["s_add"]
+    , ":s_log" => $param_info["s_log"]
+    , ":s_lat" => $param_info["s_lat"]
+    , ":p_deposit" => intval($param_info["p_deposit"])
+    , ":animal_size" => isset($param_info["animal_size"]) ? '1' : '0'
+    , ":created_at" => date("Y-m-d H:i:s")
+    , ":updated_at" => date("Y-m-d H:i:s")
+];
+if (isset($param_info["p_month"])) {
+    $prepare[":p_month"] = intval($param_info["p_month"]);
+}
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+
+        $s_no = $conn->lastInsertId();
+        $option_sql = " INSERT INTO "
+                    ." state_option( "
+                    ." s_no "
+                    ." ,s_parking "
+                    ." ,s_ele "
+                    ." ) "
+                    ." VALUES ( "
+                    ." :s_no "
+                    ." ,:s_parking "
+                    ." ,:s_ele "
+                    ." ); "
+                    ;
+        
+        $option_prepare = [
+            ":s_no" => $s_no
+            ,":s_parking" => isset($param_info["s_parking"]) ? '1' : '0' 
+            ,":s_ele" => isset($param_info["s_ele"]) ? '1' : '0'
+        ];
+        $option_stmt = $conn->prepare($option_sql);
+        $option_stmt->execute($option_prepare);
+        $img_sql = " INSERT INTO "
+                ." s_img ("
+                ." s_no "
+                ." ,url "
+                ." ,originalname "
+                ." ,thumbnail "
+                ." ,created_at "
+                ." ,updated_at "
+                ." ) "
+                ." VALUES ( "
+                ." :s_no "
+                ." ,:url "
+                ." ,:originalname "
+                ." ,:thumbnail "
+                ." ,:created_at "
+                ." ,:updated_at "
+                ." ); "
+                ;
+
+        $img_count = count($param_img['estate_img']['name']);
+
+        for($i=0; $i < $img_count; $i++) {
+        $img_prepare[$i] = [
+            ":s_no" => $s_no
+            ,":url" => $param_img['estate_img']['url'][$i]
+            ,":originalname" => $param_img['estate_img']['name'][$i]
+            ,":thumbnail" => $i == 0 ? '1' : '0'
+            ,":created_at" => date("Y-m-d H:i:s")
+            ,":updated_at" => date("Y-m-d H:i:s")
+        ];
+
+        $img_stmt = $conn->prepare($img_sql);
+        $img_stmt->execute($img_prepare[$i]);
+    }
+
+        $conn->commit();
+        return $s_no;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return var_dump($e->getMessage());
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : get_estate_info
+ * 기능 : 최근 올라온 최대 20개 까지의 매물 정보를 받아옴
+ * 파라미터 : 없음
+ * 리턴 값 : $result | array | 순서대로 키 값 0 부터 가져옴
+ */
+    function get_estate_info() {
+        $sql = " SELECT "
+        ." * "
+        ." FROM "
+        ." s_info "
+        ." JOIN "
+        ." s_img "
+        ." ON s_info.s_no "
+        ." = s_img.s_no "
+        ." JOIN "
+        ." state_option "
+        ." ON s_info.s_no = state_option.s_no "
+        ." WHERE "
+        ." s_img.thumbnail "
+        ." = "
+        ." :thumbnail "
+        ." ORDER BY "
+        ." s_img.updated_at "
+        ." DESC "
+        ." LIMIT "
+        ." :limit "
+        ;
+
+        $prepare = [
+          ":thumbnail" => '1'
+          ,":limit" => 20 
+        ];
+
+        $conn = null;
+        try {
+            db_conn($conn);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($prepare);
+            $result = $stmt->fetchAll();
+            return $result;
+        } catch(Exception $e) {
+            return $e->getMessage();
+        } finally {
+        $conn = null;
+        }
+    }
+
+/**
+ * 함수명 : get_s_no_info
+ * 기능 : 파라미터로 받은 s_no의 정보를 불러옴
+ * 파라미터 : $param_int | int
+ * 리턴 값 : $result | array
+ */
+    function get_s_no_info($param_int) {
+        $sql = " SELECT "
+        ." * "
+        ." FROM "
+        ." s_info "
+        ." JOIN "
+        ." s_img "
+        ." ON s_info.s_no "
+        ." = s_img.s_no "
+        ." JOIN "
+        ." state_option "
+        ." ON s_info.s_no = state_option.s_no "
+        ." WHERE "
+        ." s_info.s_no "
+        ." = "
+        ." :s_no "
+        ;
+
+        $prepare = [
+          ":s_no" => $param_int
+        ];
+
+        $conn = null;
+        try {
+            db_conn($conn);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($prepare);
+            $result = $stmt->fetchAll();
+            return $result;
+        } catch(Exception $e) {
+            return $e->getMessage();
+        } finally {
+        $conn = null;
+        }
+    }
 ?>
 

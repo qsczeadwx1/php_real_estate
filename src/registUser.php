@@ -1,14 +1,18 @@
-<?php 
-    define( "ROOT", $_SERVER["DOCUMENT_ROOT"]."/src/");
-    include_once(ROOT."/common/pdo.php");
+<?php
+define("ROOT", $_SERVER["DOCUMENT_ROOT"] . "/src/");
+include_once(ROOT . "/common/pdo.php");
 
-    $http_method = $_SERVER["REQUEST_METHOD"];
+// 로그인상태면 메인으로 반환
+if (isset($_SESSION["u_id"])) {
+    header("Location: main.php");
+}
 
-    if( $http_method === "POST" )
-    {
-        $arr_post = $_POST;
-        insert_user($arr_post);
-    }
+$http_method = $_SERVER["REQUEST_METHOD"];
+
+if ($http_method === "POST") {
+    $arr_post = $_POST;
+    insert_user($arr_post);
+}
 ?>
 
 <!DOCTYPE html>
@@ -20,8 +24,9 @@
     <title>펫 방</title>
     <link rel="stylesheet" href="./css/layout.css">
     <link rel="stylesheet" href="./css/registUser.css">
-    
+
 </head>
+
 <body>
     <?php include_once("./layout/header.php"); ?>
 
@@ -64,26 +69,26 @@
 
         <!-- api -->
         <label for="u_add">주소</label>
-        <input type="text" id="sample6_address" name="u_add" placeholder="'우편번호로 찾기' 버튼을 눌러서 주소를 입력하세요" readonly required>
-        <button type="button" onclick="sample6_execDaumPostcode()">우편번호 찾기</button>
+        <input type="text" id="sample6_address" name="u_add" placeholder="'주소 찾기' 버튼을 눌러서 주소를 입력하세요" readonly required>
+        <button type="button" onclick="sample6_execDaumPostcode()">주소 찾기</button>
         <br>
 
         <!-- 아코디언형식 -->
         <label for="pw_question">비밀번호 찾기 전용 질문</label>
         <div class="dropdown">
-        <button type="button" class="dropdown_toggle" onclick="questionDropdown()">
-            비밀번호 찾기 전용 질문<span class="arrow">&#9662;</span>
-        </button>
-        <ul class="dropdown_menu" id="dropdownMenu">
-            <li onclick="selectAnswer('0', '나의 어릴적 꿈은?')" class="form-control">나의 어릴적 꿈은?</li>
-            <li onclick="selectAnswer('1', '나의 가장 소중한 보물은?')" class="form-control">나의 가장 소중한 보물은?</li>
-            <li onclick="selectAnswer('2', '내가 가장 슬펐던 기억은?')" class="form-control">내가 가장 슬펐던 기억은?</li>
-            <li onclick="selectAnswer('3', '나와 가장 친한 친구는?')" class="form-control">나와 가장 친한 친구는?</li>
-            <li onclick="selectAnswer('4', '나의 첫번째 직장의 이름은?')" class="form-control">나의 첫번째 직장의 이름은?</li>
-        </ul>
-        <input type="hidden" name="pw_question" id="pw_question">
-        <br>
-    </div>
+            <button type="button" class="dropdown_toggle" onclick="questionDropdown()">
+                비밀번호 찾기 전용 질문<span class="arrow">&#9662;</span>
+            </button>
+            <ul class="dropdown_menu" id="dropdownMenu">
+                <li onclick="selectAnswer('0', '나의 어릴적 꿈은?')" class="form-control">나의 어릴적 꿈은?</li>
+                <li onclick="selectAnswer('1', '나의 가장 소중한 보물은?')" class="form-control">나의 가장 소중한 보물은?</li>
+                <li onclick="selectAnswer('2', '내가 가장 슬펐던 기억은?')" class="form-control">내가 가장 슬펐던 기억은?</li>
+                <li onclick="selectAnswer('3', '나와 가장 친한 친구는?')" class="form-control">나와 가장 친한 친구는?</li>
+                <li onclick="selectAnswer('4', '나의 첫번째 직장의 이름은?')" class="form-control">나의 첫번째 직장의 이름은?</li>
+            </ul>
+            <input type="hidden" name="pw_question" id="pw_question">
+            <br>
+        </div>
 
         <label for="pw_answer">질문 답변</label>
         <input type="text" id="pw_answer" name="pw_answer" required>
