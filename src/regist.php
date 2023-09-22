@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if(isset($_SESSION['u_id'])) {
+   header("Location: main.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 

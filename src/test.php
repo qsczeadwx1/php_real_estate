@@ -25,6 +25,9 @@ $http_method = $_SERVER["REQUEST_METHOD"];
 </head>
 <body>
     <?php var_dump($result);?>
-    
+    <div style="display:flex;">
+    <div>asdf</div>
+    <div>zxcv</div>
+    </div>
 </body>
 </html>

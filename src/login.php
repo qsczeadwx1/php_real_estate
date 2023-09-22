@@ -16,7 +16,7 @@ $http_method = $_SERVER["REQUEST_METHOD"];
 if ($http_method == "POST") {
     $arr_post = $_POST;
     $login = login_user($arr_post);
-    if ($login === true) {
+    if ($login) {
         session_start();
         $user = get_user($arr_post["id"]);
         $_SESSION["u_id"] = $user["u_id"];
@@ -43,6 +43,7 @@ if ($http_method == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>펫방</title>
+    <link rel="stylesheet" href="./css/layout.css">
 </head>
 
 <body>

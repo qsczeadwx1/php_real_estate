@@ -35,6 +35,7 @@ if(isset($_SESSION["u_id"])) {
     <title>펫 방</title>
     <link rel="stylesheet" href="./css/layout.css">
     <link rel="stylesheet" href="./css/registUser.css">
+    <link rel="stylesheet" href="./css/layout.css">
     
 </head>
 <body>

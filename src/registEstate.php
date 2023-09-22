@@ -1,9 +1,9 @@
 <?php
 define("ROOT", $_SERVER["DOCUMENT_ROOT"] . "/src/");
 include_once(ROOT . "/common/pdo.php");
-
+session_start();
 // 공인중개사로 로그인 상태가 아니면 메인으로
-if (isset($_SESSION["seller_license"])) {
+if (!isset($_SESSION["seller_license"])) {
     header("Location: main.php");
 }
 
@@ -16,11 +16,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $upload_dir = "./upload/";
     $min_img = 5;
     $max_img = 10;
+    // 유효성검사
+    if($arr_post['s_option'] == 'n') {
+        $_SESSION['err_msg'] = "건물유형을 선택해서 작성해 주세요!";
+        header("Location: registEstate.php");
+        exit;
+    }
+    if($arr_post['s_type'] == 'n') {
+        $_SESSION['err_msg'] = "매매유형을 선택해서 작성해 주세요!";
+        header("Location: registEstate.php");
+        exit;
+    }
+    if($arr_post['s_add'] == '') {
+        $_SESSION['err_msg'] = "주소를 입력해 주세요.";
+        header("Location: registEstate.php");
+        exit;
+    }
+    if($arr_post['s_lat'] == '' && $arr_post['s_log'] == '') {
+        $_SESSION['err_msg'] = "주소를 입력해 주세요!";
+        header("Location: registEstate.php");
+        exit;
+    }
+
+    if($arr_post['s_type'] == '2' && $arr_post['p_month'] == '') {
+        $_SESSION['err_msg'] = "월세를 입력해 주세요!";
+        header("Location: registEstate.php");
+        exit;
+    }
+
+    if($arr_post['s_type'] == '0' && !$arr_post['p_month'] == '') {
+        $_SESSION['err_msg'] = "매매는 월세가 없습니다!";
+        header("Location: registEstate.php");
+        exit;
+    }
 
     // 파일 개수 확인
     $img_count = count($_FILES['estate_img']['name']);
     if ($img_count < $min_img || $img_count > $max_img) {
-        echo "파일은" . $min_img . "개에서 " . $max_img . "개 사이로 업로드해 주세요.";
+        $_SESSION['err_msg'] =  "파일은" . $min_img . "개에서 " . $max_img . "개 사이로 업로드해 주세요.";
+        header("Location: registEstate.php");
         exit;
     }
 
@@ -29,7 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $file_ext = strtolower(pathinfo($_FILES['estate_img']['name'][$i], PATHINFO_EXTENSION));
 
         if (!in_array($file_ext, $ext)) {
-            echo "파일 확장자는 jpg 또는 png만 허용됩니다.";
+            $_SESSION['err_msg'] =  "파일 확장자는 jpg 또는 png만 허용됩니다.";
+            header("Location: registEstate.php");
             exit;
         }
     }
@@ -44,7 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     $result = insert_estate($arr_post, $img_post);
+    if($result){
     header("Location: detailEstate.php?s_no=".$result);
+    }
 
 }
 
@@ -58,10 +95,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>펫방</title>
+    <link rel="stylesheet" href="./css/layout.css">
 </head>
 
 <body>
-    <?php include_once("./layout/header.php"); ?>
+    <?php
+    include_once("./layout/header.php"); 
+    ?>
+
+    <?php 
+        
+        if(isset($_SESSION['err_msg'])) {
+        echo "<p style='color:red;'>" . $_SESSION['err_msg'] . "</p>";
+        unset($_SESSION['err_msg']);
+        }
+         ?>
 
     <form action="./registEstate.php" id="frm" method="post" enctype="multipart/form-data">
         <label for="estate_img">건물사진</label>
@@ -72,6 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <br>
         <label for="s_option">건물형태</label>
         <select name="s_option" id="s_option">
+            <option value="n">건물유형을 선택해 주세요</option>
             <option value="0">아파트</option>
             <option value="1">단독주택</option>
             <option value="2">오피스텔</option>
@@ -79,8 +128,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <option value="4">원룸</option>
         </select>
         <br>
-        <label for="s_type">매매형태</label>
+        <label for="s_type">매매유형</label>
         <select name="s_type" id="s_type">
+            <option value="n">매매유형을 선택해 주세요</option>
             <option value="0">매매</option>
             <option value="1">전세</option>
             <option value="2">월세</option>

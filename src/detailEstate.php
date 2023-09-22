@@ -21,6 +21,7 @@ $http_method = $_SERVER["REQUEST_METHOD"];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./css/detail.css">
+    <link rel="stylesheet" href="./css/layout.css">
 </head>
 <body>
 <?php include_once("./layout/header.php"); ?>
@@ -49,11 +50,43 @@ $http_method = $_SERVER["REQUEST_METHOD"];
             </div>
             <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
                 style="text-align: left">
-                판매 유형 : <?=$result['0']['s_type']?>
+                판매 유형 : <?php
+                switch ($result['0']['s_type']) {
+                    case '0':
+                        echo '매매';
+                        break;
+                    case '1':
+                        echo '전세';
+                        break;
+                    case '2':
+                        echo '월세';
+                        break;
+                }
+                ?>
             </div>
             <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
                 style="text-align: left">
-                건물 유형 : <?=$result['0']['s_option']?>
+                건물 유형 : <?php
+                switch ($result['0']['s_option']) {
+                    case '0':
+                        echo '아파트';
+                        break;
+                    case '1':
+                        echo '단독주택';
+                        break;
+                    case '2':
+                        echo '오피스텔';
+                        break;
+                    case '3':
+                        echo '빌라';
+                        break;
+                    case '4':
+                        echo '원룸';
+                        break;
+                    
+                    default:
+                        break;
+                }?>
             </div>
             <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
                 style="text-align: left">
@@ -108,19 +141,18 @@ $http_method = $_SERVER["REQUEST_METHOD"];
         
         <?php include_once("./layout/footer.php"); ?>
 
-        <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9abea084b391e97658a9380c837b9608&libraries=services"></script>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c3af763d949f96c4cc8cca5e5762703f&libraries=services,clusterer,drawing"></script>
         <script>
             var container = document.getElementById('map');
             var options = {
-                center: new kakao.maps.LatLng({{ $s_info->s_log }}, {{ $s_info->s_lat }}),
+                center: new kakao.maps.LatLng( <?=$result['0']['s_log']?> , <?=$result['0']['s_lat']?>),
                 level: 5
             };
 
             var map = new kakao.maps.Map(container, options);
 
-            var position = new kakao.maps.LatLng({{ $s_info->s_log }}, {{ $s_info->s_lat }}); // 마커가 표시될 위치를 설정합니다
-            var iwContent = '<div style="padding: 5px;">{{ $s_info->s_name }}</div>'; // 인포윈도우에 표시될 내용입니다
+            var position = new kakao.maps.LatLng(<?=$result['0']['s_log']?> , <?=$result['0']['s_lat']?>); // 마커가 표시될 위치를 설정합니다
+            var iwContent = '<div style="padding: 5px;">'+'<?=$result['0']['s_name']?>'+'</div>'; // 인포윈도우에 표시될 내용입니다
 
             // 마커를 생성합니다
             var marker = new kakao.maps.Marker({
@@ -134,16 +166,6 @@ $http_method = $_SERVER["REQUEST_METHOD"];
             });
             // 인포윈도우를 마커 위에 표시합니다
             infowindow.open(map, marker);
-
-
-
-            const btn2 = document.getElementById("btn2");
-            let newWindow = null;
-
-            btn2.addEventListener("click", () => {
-                newWindow = window.open("{{ route('sellerPhone', ['s_no' => $photo->s_no]) }}", "find",
-                    "width=550,height=200");
-            });
 
             const btn1 = document.getElementById("btn1");
             const btn3 = document.getElementById("btn3");
