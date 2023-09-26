@@ -423,17 +423,17 @@ function get_s_no_info($param_int)
         . " state_option "
         . " ON s_info.s_no = state_option.s_no "
         . " WHERE "
-        . " s_stai "
+        . " thumbnail"
+        . " = "
+        . " :thumbnail "
+        . " AND "
+        . " (s_stai "
         . " LIKE "
         . " :search "
         . " OR "
         . " s_add "
         . " LIKE "
-        . " :search2 "
-        . " AND "
-        . " thumbnail"
-        . " = "
-        . " :thumbnail "
+        . " :search2); "
         ;
 
         $prepare = [
@@ -455,3 +455,46 @@ function get_s_no_info($param_int)
             $conn = null;
         }
     }
+
+/**
+ * 함수명 : get_estate_info_json
+ * 기능 : 모든 매물 정보를 받아옴
+ * 파라미터 : 없음
+ * 리턴 값 : $result | json
+ */
+function get_estate_info_json()
+{
+    $sql = " SELECT "
+        . " * "
+        . " FROM "
+        . " s_info "
+        . " JOIN "
+        . " s_img "
+        . " ON s_info.s_no "
+        . " = s_img.s_no "
+        . " JOIN "
+        . " state_option "
+        . " ON s_info.s_no = state_option.s_no "
+        . " WHERE "
+        . " s_img.thumbnail "
+        . " = "
+        . " :thumbnail "
+        ;
+
+    $prepare = [
+        ":thumbnail" => '1'
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetchAll();
+        return json_encode($result);
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}

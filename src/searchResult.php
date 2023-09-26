@@ -5,8 +5,6 @@
 if($_SERVER["REQUEST_METHOD"] == "GET") {
     $search = $_GET['search'];
     $estate_info = get_s_info_search($search);
-
-    
     }
 
 

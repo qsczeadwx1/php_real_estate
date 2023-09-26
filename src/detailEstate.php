@@ -1,7 +1,7 @@
 <?php
 define( "ROOT", $_SERVER["DOCUMENT_ROOT"]."/src/");
 include_once(ROOT."/common/pdo.php");
-
+session_start();
 $http_method = $_SERVER["REQUEST_METHOD"];
 
     if($http_method == "GET") {
@@ -23,6 +23,11 @@ $http_method = $_SERVER["REQUEST_METHOD"];
     <link rel="stylesheet" href="./css/detail.css">
     <link rel="stylesheet" href="./css/layout.css">
 </head>
+<style>
+    .contents{
+    text-align: left;
+    }
+</style>
 <body>
 <?php include_once("./layout/header.php"); ?>
 <div>
@@ -40,16 +45,13 @@ $http_method = $_SERVER["REQUEST_METHOD"];
         <br>
         <h1 class="dark:text-white">건물 정보</h1>
         <div style="margin-left: 30px">
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 건물 이름 : <?=$result['0']['s_name']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 건물 주소 : <?=$result['0']['s_add']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 판매 유형 : <?php
                 switch ($result['0']['s_type']) {
                     case '0':
@@ -64,8 +66,7 @@ $http_method = $_SERVER["REQUEST_METHOD"];
                 }
                 ?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 건물 유형 : <?php
                 switch ($result['0']['s_option']) {
                     case '0':
@@ -88,38 +89,30 @@ $http_method = $_SERVER["REQUEST_METHOD"];
                         break;
                 }?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 평수 : <?=$result['0']['s_size']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 층수 : <?=$result['0']['s_fl']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 근처역 : <?=$result['0']['s_stai']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 보증금 or 매매가: <?=$result['0']['p_deposit']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 월세 or 관리비: <?=$result['0']['p_month']?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 대형동물 가능 여부 :
                 <?=$result['0']['animal_size'] == '1' ? '가능' : 'X' ?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 주차가능 여부 :
                 <?=$result['0']['s_parking'] == '1' ? 'O' : 'X'?>
             </div>
-            <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose dark:text-white dark:bg-gray-700"
-                style="text-align: left">
+            <div class="contents">
                 엘레베이터 여부 :
                 <?=$result['0']['s_ele'] == '1' ? 'O' : 'X' ?>
             </div>

@@ -6,6 +6,9 @@ val.addEventListener('click', () => {
   var s_lat = document.getElementById("s_lat");
   var callback = function (result, status) {
     if (status === kakao.maps.services.Status.OK) {
+      console.log(s_lat.value);
+      console.log(s_log.value);
+
       s_lat.value = result[0]["x"];
       s_log.value = result[0]["y"];
     }
