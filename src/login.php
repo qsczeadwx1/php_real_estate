@@ -16,7 +16,7 @@ $http_method = $_SERVER["REQUEST_METHOD"];
 if ($http_method == "POST") {
     $arr_post = $_POST;
     $login = login_user($arr_post);
-    if ($login) {
+    if ($login === true) {
         session_start();
         $user = get_user($arr_post["id"]);
         $_SESSION["u_id"] = $user["u_id"];
@@ -64,7 +64,8 @@ if ($http_method == "POST") {
         <br>
     </form>
     <a href="./regist.php">아직 회원이 아니신가요?</a>
-
+    <br>
+    <a href="./findUserId.php">아이디 찾기</a>&nbsp;&nbsp;<a href="./findUserPw.php">비밀번호 찾기</a>
 
     <?php include_once("./layout/footer.php"); ?>
 

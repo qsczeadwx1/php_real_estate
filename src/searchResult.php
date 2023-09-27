@@ -2,6 +2,8 @@
     define("ROOT", $_SERVER["DOCUMENT_ROOT"] . "/src/");
     include_once(ROOT . "/common/pdo.php");
 
+    session_start();
+    
 if($_SERVER["REQUEST_METHOD"] == "GET") {
     $search = $_GET['search'];
     $estate_info = get_s_info_search($search);

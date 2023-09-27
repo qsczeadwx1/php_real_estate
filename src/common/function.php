@@ -498,3 +498,121 @@ function get_estate_info_json()
         $conn = null;
     }
 }
+
+/**
+ * 함수명 : find_user_id
+ * 기능 : 이메일, 이름 값을 받아 유저 아이디 정보 받아옴
+ * 파라미터 : $email, $name | string, string
+ * 리턴 값 : 획득 성공시 $id | string (유저id) | 실패시 에러메세지
+ */
+function find_user_id($email, $name)
+{
+    $sql = " SELECT "
+        . " u_id "
+        . " FROM "
+        . " user "
+        . " WHERE "
+        . " email "
+        . " = "
+        . " :email "
+        . " AND "
+        . " name "
+        . " = "
+        . " :name ";
+
+    $prepare = [
+        ":email" => $email
+        ,":name" => $name
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $id = $stmt->fetch();
+        return $id;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : find_user_question
+ * 기능 : id를 받아서 비밀번호 찾기 전용 질문, 답변 반환
+ * 파라미터 : $id | string
+ * 리턴 값 : 획득 성공시 $result | array | 실패시 에러메세지
+ */
+function find_user_question($id)
+{
+    $sql = " SELECT "
+        . " pw_question, "
+        . " pw_answer "
+        . " FROM "
+        . " user "
+        . " WHERE "
+        . " u_id "
+        . " = "
+        . " :u_id ";
+
+    $prepare = [
+        ":u_id" => $id
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetch();
+        return $result;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+
+/**
+ * 함수명 : find_user_pw
+ * 기능 : id를 받아서 비밀번호 찾기 전용 질문, 답변 반환
+ * 파라미터 : $id | string
+ * 리턴 값 : 획득 성공시 $result | array | 실패시 에러메세지
+ */
+function find_user_pw($param_arr)
+{
+    $sql = " SELECT "
+        . " pw_question, "
+        . " pw_answer "
+        . " FROM "
+        . " user "
+        . " WHERE "
+        . " u_id "
+        . " = "
+        . " :u_id "
+        . " AND "
+        . " :pw_answer "
+        . " = "
+        . " :pw_answer ";
+
+    $prepare = [
+        ":u_id" => base64_decode($param_arr['u_id']),
+        ":pw_answer" => $param_arr['pw_answer']
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetch();
+        return $result;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
