@@ -41,13 +41,13 @@ $estate_info = get_estate_info();
 <body>
     <?php include_once("./layout/header.php"); ?>
     <div class="search">
-    <h1>펫 방</h1>
+    <h1 style="margin-top:10px;">펫 방</h1>
     <form action="./searchResult.php" method="GET">
     <input type="text" name="search" placeholder="주소나 지하철명으로 검색해 주세요">
     <button>Search</button>
     </form>
     </div>
-    <div>
+    <div style="margin-left:20px;">
         <h2>최근 등록된 매물</h2>
         <a href="./map.php" style="text-align:right;"><button>지도에서 매물 검색</button></a>
     </div>

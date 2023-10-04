@@ -7,12 +7,14 @@ $http_method = $_SERVER["REQUEST_METHOD"];
 if ($http_method == "GET") {
     $s_no = $_GET['s_no'];
     $result = get_s_no_info($s_no);
-
     $user_info = get_user_no($result['0']['u_no']);
+    $u_no = get_user($_SESSION['u_id']);
+
     if (isset($_SESSION['u_id'])) {
         $user_no = get_user($_SESSION['u_id']);
         $wishlist = chk_wishlist($user_no['u_no'], $result['0']['s_no']);
     }
+
 } else {
     header("Location: main.php");
 }
@@ -49,6 +51,11 @@ if ($http_method == "GET") {
         </div>
         <br>
         <br>
+
+        <?php if($result['0']['u_no'] == $u_no['u_no']) {
+        echo '<a href="./updateEstate.php?s_no='.$s_no.'">매물수정하기</a>';
+    } ?>
+
         <h1 class="dark:text-white">건물 정보</h1>
         <div style="margin-left: 30px">
             <form action="./jjim.php" method="POST">
