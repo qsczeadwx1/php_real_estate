@@ -127,7 +127,6 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
                                     </span>
                                 </div>
                             </div>
-                            <a href="./detailEstate.php?s_no=<?=$val['s_no']?>" class="btn btn-primary py-2 px-3">매물보러가기</a>
                         </div>
                     </div>
                     

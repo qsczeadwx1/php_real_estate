@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <br>
 
 <form action="./findUserPw.php" method="post">
-<label for="u_id">ID</label>
+<label for="u_id">ID : </label>
 <input type="text" id="u_id" name="u_id">
 <br>
 <br>

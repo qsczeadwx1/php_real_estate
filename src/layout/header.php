@@ -12,7 +12,7 @@
     // 일반 유저일때
         elseif(isset($_SESSION["u_id"]) && !isset($_SESSION["seller_license"]))
         { ?>
-            <a href='./userDetail.php'><?=$_SESSION["u_id"]?></a>
+            <a href='./userDetail.php?id=<?=$_SESSION["u_id"]?>'><?=$_SESSION["u_id"]?></a>
             <!-- <a href='/user/'>마이페이지</a> -->
             <a href='./logout.php'>로그아웃</a>
         <?php }
@@ -20,7 +20,7 @@
         elseif(isset($_SESSION["seller_license"]))
         { ?>
             <a href='./registEstate.php'>매물올리기</a>
-            <a href='./userDetail.php'><?=$_SESSION["u_id"]?>님</a>
+            <a href='./userDetail.php?id=<?=$_SESSION["u_id"]?>'><?=$_SESSION["u_id"]?>님</a>
             <!-- <a href='/user/'>마이페이지</a> -->
             <a href='./logout.php'>로그아웃</a>
         <?php } ?>

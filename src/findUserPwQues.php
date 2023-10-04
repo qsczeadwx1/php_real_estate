@@ -40,17 +40,19 @@ session_start();
     if($_SERVER["REQUEST_METHOD"] == "POST") {
         $arr_post = $_POST;
         $ques = $arr_post['pw_question'];
-        $hash = base64_encode($arr_post['u_id']);
-        
         $result = find_user_pw($arr_post);
-        if($result === true) {
 
-            header("Location: findUserPwCng.php?id=".$hash."");
+        if($result) {
+            header("Location: findUserPwCng.php?id=".$arr_post['u_id']."");
             exit();
         } 
         else if($result === false) {
             $_SESSION['err_msg'] = '유효하지 않은 값입니다. 알맞은 값을 입력해 주세요.';
-            header("Location: findUserPwQues.php?=".$hash."");
+            header("Location: findUserPwQues.php?id=".$arr_post['u_id']."");
+            exit();
+        } else {
+            $_SESSION['err_msg'] = '예기치 못한 에러가 발생했습니다. 다시 시도해 주세요.';
+            header("Location: findUserPwQues.php?id=".$arr_post['u_id']."");
             exit();
         }
     }
@@ -68,6 +70,8 @@ session_start();
 
 <body>
 <?php include_once("./layout/header.php"); ?>
+<div style="color:red; font-weight:900;"><?=isset($_SESSION['err_msg']) ? $_SESSION['err_msg']  : '' ?></div>
+<?php unset($_SESSION['err_msg']); ?>
 
 <div>질문 : <?=$ques?></div>
 <form action="./findUserPwQues.php?id=<?=isset($arr_get['id']) ? $arr_get['id'] : $arr_post['u_id']?>" method="POST">

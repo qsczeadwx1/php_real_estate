@@ -51,7 +51,16 @@ function insert_user($param_arr)
     $password = password_hash($param_arr["pw"], PASSWORD_DEFAULT);
 
     $prepare = [
-        ":u_id" => $param_arr["id"], ":u_password" => $password, ":email" => $param_arr["email"], ":name" => $param_arr["name"], ":phone_no" => $param_arr["phone_no"], ":u_add" => $param_arr["u_add"], ":pw_question" => $param_arr["pw_question"], ":pw_answer" => $param_arr["pw_answer"], ":created_at" => date("Y-m-d H:i:s"), ":updated_at" => date("Y-m-d H:i:s")
+        ":u_id" => $param_arr["id"]
+        , ":u_password" => $password
+        , ":email" => $param_arr["email"]
+        , ":name" => $param_arr["name"]
+        , ":phone_no" => $param_arr["phone_no"]
+        , ":u_add" => $param_arr["u_add"]
+        , ":pw_question" => $param_arr["pw_question"]
+        , ":pw_answer" => $param_arr["pw_answer"]
+        , ":created_at" => date("Y-m-d H:i:s")
+        , ":updated_at" => date("Y-m-d H:i:s")
     ];
 
     if (isset($param_arr["seller_license"])) {
@@ -245,7 +254,20 @@ function insert_estate($param_info, $param_img)
     $sql .= " ); ";
 
     $prepare = [
-        ":u_no" => $get_user_no["u_no"], ":s_name" => $param_info["s_name"], ":s_option" => $param_info["s_option"], ":s_type" => $param_info["s_type"], ":s_size" => intval($param_info["s_size"]), ":s_fl" => intval($param_info["s_fl"]), ":s_stai" => $param_info["s_stai"], ":s_add" => $param_info["s_add"], ":s_log" => $param_info["s_log"], ":s_lat" => $param_info["s_lat"], ":p_deposit" => intval($param_info["p_deposit"]), ":animal_size" => isset($param_info["animal_size"]) ? '1' : '0', ":created_at" => date("Y-m-d H:i:s"), ":updated_at" => date("Y-m-d H:i:s")
+        ":u_no" => $get_user_no["u_no"]
+        , ":s_name" => $param_info["s_name"]
+        , ":s_option" => $param_info["s_option"]
+        , ":s_type" => $param_info["s_type"]
+        , ":s_size" => intval($param_info["s_size"])
+        , ":s_fl" => intval($param_info["s_fl"])
+        , ":s_stai" => $param_info["s_stai"]
+        , ":s_add" => $param_info["s_add"]
+        , ":s_log" => $param_info["s_log"]
+        , ":s_lat" => $param_info["s_lat"]
+        , ":p_deposit" => intval($param_info["p_deposit"])
+        , ":animal_size" => isset($param_info["animal_size"]) ? '1' : '0'
+        , ":created_at" => date("Y-m-d H:i:s")
+        , ":updated_at" => date("Y-m-d H:i:s")
     ];
     if (isset($param_info["p_month"])) {
         $prepare[":p_month"] = intval($param_info["p_month"]);
@@ -271,7 +293,9 @@ function insert_estate($param_info, $param_img)
             . " ); ";
 
         $option_prepare = [
-            ":s_no" => $s_no, ":s_parking" => isset($param_info["s_parking"]) ? '1' : '0', ":s_ele" => isset($param_info["s_ele"]) ? '1' : '0'
+            ":s_no" => $s_no
+            , ":s_parking" => isset($param_info["s_parking"]) ? '1' : '0'
+            , ":s_ele" => isset($param_info["s_ele"]) ? '1' : '0'
         ];
         $option_stmt = $conn->prepare($option_sql);
         $option_stmt->execute($option_prepare);
@@ -297,7 +321,12 @@ function insert_estate($param_info, $param_img)
 
         for ($i = 0; $i < $img_count; $i++) {
             $img_prepare[$i] = [
-                ":s_no" => $s_no, ":url" => $param_img['estate_img']['url'][$i], ":originalname" => $param_img['estate_img']['name'][$i], ":thumbnail" => $i == 0 ? '1' : '0', ":created_at" => date("Y-m-d H:i:s"), ":updated_at" => date("Y-m-d H:i:s")
+                ":s_no" => $s_no
+                , ":url" => $param_img['estate_img']['url'][$i]
+                , ":originalname" => $param_img['estate_img']['name'][$i]
+                , ":thumbnail" => $i == 0 ? '1' : '0'
+                , ":created_at" => date("Y-m-d H:i:s")
+                , ":updated_at" => date("Y-m-d H:i:s")
             ];
 
             $img_stmt = $conn->prepare($img_sql);
@@ -344,7 +373,8 @@ function get_estate_info()
         . " :limit ";
 
     $prepare = [
-        ":thumbnail" => '1', ":limit" => 20
+        ":thumbnail" => '1'
+        , ":limit" => 20
     ];
 
     $conn = null;
@@ -455,6 +485,54 @@ function get_s_no_info($param_int)
             $conn = null;
         }
     }
+
+    /**
+ * 함수명 : get_s_info_indiv
+ * 기능 : 한 유저가 올린 모든 s_info의 정보를 가져옴
+ * 파라미터 : $param_str | string
+ * 리턴 값 : $result | array
+ */
+function get_s_info_indiv($param_str) {
+
+    $sql = " SELECT "
+    . " * "
+    . " FROM "
+    . " s_info "
+    . " JOIN "
+    . " s_img "
+    . " ON s_info.s_no "
+    . " = s_img.s_no "
+    . " JOIN "
+    . " state_option "
+    . " ON s_info.s_no = state_option.s_no "
+    . " WHERE "
+    . " thumbnail"
+    . " = "
+    . " :thumbnail "
+    . " AND "
+    . " u_no "
+    . " = "
+    . " :u_no "
+    ;
+
+    $prepare = [
+        "u_no" => $param_str
+        ,":thumbnail" => '1'
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetchAll();
+        return $result;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
 
 /**
  * 함수명 : get_estate_info_json
@@ -578,8 +656,8 @@ function find_user_question($id)
 
 /**
  * 함수명 : find_user_pw
- * 기능 : id를 받아서 비밀번호 찾기 전용 질문, 답변 반환
- * 파라미터 : $id | string
+ * 기능 : 유저가 회원가입시 입력했던 질문 답변이 맞는지 확인
+ * 파라미터 : $param_arr | array
  * 리턴 값 : 획득 성공시 $result | array | 실패시 에러메세지
  */
 function find_user_pw($param_arr)
@@ -594,7 +672,7 @@ function find_user_pw($param_arr)
         . " = "
         . " :u_id "
         . " AND "
-        . " :pw_answer "
+        . " pw_answer "
         . " = "
         . " :pw_answer ";
 
@@ -611,6 +689,96 @@ function find_user_pw($param_arr)
         $result = $stmt->fetch();
         return $result;
     } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : change_user_pw
+ * 기능 : 유저의 비밀번호 변경
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function change_user_pw($param_arr)
+{
+    $sql = " UPDATE "
+        . " user "
+        . " SET "
+        . " u_password "
+        . " = "
+        . " :u_password "
+        . " WHERE "
+        . " u_id "
+        . " = "
+        . " :u_id "
+        . " ; "
+        ;
+
+    $password = password_hash($param_arr["pw"], PASSWORD_DEFAULT);
+
+    $prepare = [
+        ":u_id" => base64_decode($param_arr['u_id']),
+        ":u_password" => $password
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result_cnt = $stmt->rowCount();
+        $conn->commit();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : change_user_info
+ * 기능 : 유저의 정보 변경 (이메일, 전화번호)
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function change_user_info($param_arr)
+{
+    $sql = " UPDATE "
+        . " user "
+        . " SET "
+        . " email = :email "
+        . " ,phone_no = :phone_no "
+        . " ,updated_at = :updated_at"
+        . " WHERE "
+        . " u_id "
+        . " = "
+        . " :u_id "
+        . " ; "
+        ;
+
+    $prepare = [
+        ":email" => $param_arr['email']
+        ,":phone_no" => $param_arr['phone_no']
+        ,":u_id" => $param_arr['u_id']
+        ,":updated_at" => date("Y-m-d H:i:s")
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result_cnt = $stmt->rowCount();
+        $conn->commit();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
         return $e->getMessage();
     } finally {
         $conn = null;
