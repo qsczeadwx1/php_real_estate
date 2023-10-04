@@ -392,6 +392,61 @@ function get_estate_info()
 }
 
 /**
+ * 함수명 : get_estate_info_wishlist
+ * 기능 : s_no를 array로 받아, 해당하는 모든 s_no의 정보를 출력
+ * 파라미터 : $s_no_array | array
+ * 리턴 값 : $result | array | 순서대로 키 값 0 부터 가져옴
+ */
+function get_estate_info_wishlist($s_no_array)
+{
+    // 받아온 배열을 ','로 나누고 값들은 int로 배치
+    // int로 안 바꿔주면 아니면 제대로 값안나옴
+    $s_no_string = implode(',', array_map('intval', $s_no_array));
+
+    $sql = " SELECT "
+        . " * "
+        . " FROM "
+        . " s_info "
+        . " JOIN "
+        . " s_img "
+        . " ON s_info.s_no "
+        . " = s_img.s_no "
+        . " JOIN "
+        . " state_option "
+        . " ON s_info.s_no = state_option.s_no "
+        . " WHERE "
+        . " s_img.thumbnail "
+        . " = "
+        . " :thumbnail "
+        . " AND "
+        . " s_info.s_no IN ( "
+        . " $s_no_string "
+        . " ) "
+        . " ORDER BY "
+        . " s_img.updated_at "
+        . " DESC "
+        . " ; "
+        ;
+
+    $prepare = [
+        ":thumbnail" => '1'
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetchAll();
+        return $result;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
  * 함수명 : get_s_no_info
  * 기능 : 파라미터로 받은 s_no의 정보를 불러옴
  * 파라미터 : $param_int | int
@@ -779,6 +834,151 @@ function change_user_info($param_arr)
         return $result_cnt;
     } catch (Exception $e) {
         $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : chk_wishlist
+ * 기능 : 유저의 정보 변경 (이메일, 전화번호)
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function chk_wishlist($u_no, $s_no) {
+    $sql = " SELECT "
+        . " * " 
+        . " FROM "
+        . " wish_list "
+        . " WHERE " 
+        . " u_no = :u_no "
+        . " AND "
+        . " s_no = :s_no "
+        . " ; "
+        ; 
+    $prepare = [
+            ":u_no" => $u_no
+            ,":s_no" => $s_no
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetch();
+        if($result === false) {
+            $result = null;
+        }
+        return $result;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : insert_wishlist
+ * 기능 : 유저의 정보 변경 (이메일, 전화번호)
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function insert_wishlist($u_no, $s_no) {
+    $sql = " INSERT INTO "
+        . " wish_list " 
+        . " (u_no, s_no) "
+        . " VALUES " 
+        . " (:u_no, :s_no) "
+        . " ; "
+        ; 
+    $prepare = [
+            ":u_no" => $u_no
+            ,":s_no" => $s_no
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result_cnt = $stmt->rowCount();
+        $conn->commit();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : insert_wishlist
+ * 기능 : 유저의 정보 변경 (이메일, 전화번호)
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function delete_wishlist($u_no, $s_no) {
+    $sql = " DELETE FROM "
+        . " wish_list "
+        . " WHERE " 
+        . " u_no = :u_no "
+        . " AND "
+        . " s_no = :s_no "
+        . " ; "
+        ; 
+    $prepare = [
+            ":u_no" => $u_no
+            ,":s_no" => $s_no
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result_cnt = $stmt->rowCount();
+        $conn->commit();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : get_wishlist
+ * 기능 : 유저의 정보 변경 (이메일, 전화번호)
+ * 파라미터 : $param_arr | array
+ * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ */
+function get_wishlist($u_no) {
+    $sql = " SELECT "
+        . " * " 
+        . " FROM "
+        . " wish_list "
+        . " WHERE " 
+        . " u_no = :u_no "
+        . " ; "
+        ; 
+    $prepare = [
+            ":u_no" => $u_no
+    ];
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+        $result = $stmt->fetchAll();
+        return $result;
+    } catch (Exception $e) {
         return $e->getMessage();
     } finally {
         $conn = null;

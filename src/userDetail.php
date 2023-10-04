@@ -38,7 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if(isset($_SESSION['seller_license'])) {
     $estate_info = get_s_info_indiv($user_info['u_no']);
 } else {
-    
+    $user_no = get_user($_SESSION['u_id']);
+    $wishlist_no = array_column(get_wishlist($user_no['u_no']), 's_no');
+    $estate_info = get_estate_info_wishlist($wishlist_no);
 }
 
 
@@ -159,6 +161,76 @@ if(isset($_SESSION['seller_license'])) {
     <?php } else {?>
     <div style="margin-left:10px;">
     <h3>찜한 매물</h3>
+    <div class="section">
+        <div class="container" style="max-width:75%;">
+            <div class="row">
+                <div class="col-12" style="padding:0">
+                    <?php
+                    $i = 1;
+                    foreach ($estate_info as $val) {
+                    ?>
+                        <div class="property-item" style="display:inline-block;">
+                            <a href="./detailEstate.php?s_no=<?= $val['s_no'] ?>" class="img">
+                                <img src="./upload/img_<?= $i;
+                                                        $i++ ?>.jpg" alt="Image" class="img-fluid" style="width: 350px; height: 300px; margin-bottom: 50px;" />
+                            </a>
+
+                            <div class="property-content">
+                                <div class="price mb-2">
+                                    <a href="{{route('struct.detail',['s_no'=>$photo->s_no])}}">
+                                        <span>
+                                            <?= $val['s_name'] ?>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <span class="d-block mb-2 text-black-50"><?= $val['s_add'] ?></span>
+                                    <span class="city d-block mb-3"><?= number_format($val['p_deposit']); ?>
+                                        <?= isset($val['p_month']) ? ' / ' . $val['p_month'] : null ?>
+                                    </span>
+
+                                    <div class="specs d-flex mb-4">
+                                        <span class="d-block d-flex align-items-center me-3">
+                                            <span class="icon-building me-2"></span>
+                                            <span class="caption"><?php
+                                                                    switch ($val['s_option']) {
+                                                                        case '0':
+                                                                            echo '아파트';
+                                                                            break;
+                                                                        case '1':
+                                                                            echo '단독주택';
+                                                                            break;
+                                                                        case '2':
+                                                                            echo '오피스텔';
+                                                                            break;
+                                                                        case '3':
+                                                                            echo '빌라';
+                                                                            break;
+                                                                        case '4':
+                                                                            echo '원룸';
+                                                                            break;
+
+                                                                        default:
+                                                                            break;
+                                                                    } ?></span>
+                                        </span>
+                                        <span class="d-block d-flex align-items-center">
+
+                                            <span class="fa-solid fa-dog me-2"></span>
+                                            <span class="caption"> 대형동물
+                                                <strong><?= $val['animal_size'] == 1 ? 'O' : 'X' ?></strong>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
     <?php } ?>
 
