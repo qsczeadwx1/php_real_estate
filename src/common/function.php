@@ -842,9 +842,9 @@ function change_user_info($param_arr)
 
 /**
  * 함수명 : chk_wishlist
- * 기능 : 유저의 정보 변경 (이메일, 전화번호)
- * 파라미터 : $param_arr | array
- * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ * 기능 : 찜한 매물인지 확인하는 함수
+ * 파라미터 : $u_no, $s_no | int, int
+ * 리턴 값 : $result 값이 없을 시 false대신 null로 넘김| array | 실패시 에러메세지
  */
 function chk_wishlist($u_no, $s_no) {
     $sql = " SELECT "
@@ -881,8 +881,8 @@ function chk_wishlist($u_no, $s_no) {
 
 /**
  * 함수명 : insert_wishlist
- * 기능 : 유저의 정보 변경 (이메일, 전화번호)
- * 파라미터 : $param_arr | array
+ * 기능 : 매물 찜하기
+ * 파라미터 : $u_no, $s_no | int, int
  * 리턴 값 : $result_cnt | int | 실패시 에러메세지
  */
 function insert_wishlist($u_no, $s_no) {
@@ -916,9 +916,9 @@ function insert_wishlist($u_no, $s_no) {
 }
 
 /**
- * 함수명 : insert_wishlist
- * 기능 : 유저의 정보 변경 (이메일, 전화번호)
- * 파라미터 : $param_arr | array
+ * 함수명 : delete_wishlist
+ * 기능 : 찜한 매물 삭제
+ * 파라미터 : $u_no, s_no | int, int
  * 리턴 값 : $result_cnt | int | 실패시 에러메세지
  */
 function delete_wishlist($u_no, $s_no) {
@@ -954,9 +954,9 @@ function delete_wishlist($u_no, $s_no) {
 
 /**
  * 함수명 : get_wishlist
- * 기능 : 유저의 정보 변경 (이메일, 전화번호)
- * 파라미터 : $param_arr | array
- * 리턴 값 : $result_cnt | int | 실패시 에러메세지
+ * 기능 : u_no가 찜한 모든 s_no 리턴
+ * 파라미터 : $u_no | int
+ * 리턴 값 : $result | array | 실패시 에러메세지
  */
 function get_wishlist($u_no) {
     $sql = " SELECT "
