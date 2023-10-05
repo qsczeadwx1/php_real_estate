@@ -2,11 +2,20 @@
 define( "ROOT", $_SERVER["DOCUMENT_ROOT"]."/src/");
 include_once(ROOT."/common/pdo.php");
 session_start();
+if(!isset($_SESSION['u_id'])) {
+    header("Location: main.php");
+    exit;
+} 
+
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $s_no = $_GET['s_no'];
     $result = get_s_no_info($s_no);
-    
+    $u_no = get_user($_SESSION['u_id']);
+    if($result[0]['u_no'] != $u_no['u_no']) {
+        header("Location: main.php");
+        exit;
+    }
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $arr_post = $_POST;
@@ -37,6 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: updateEstate.php?s_no=".$s_no."");
         exit;
     }
+    if($arr_post['p_month'] == '' || $arr_post['p_month'] == 0) {
+        $arr_post['p_month'] = NULL;
+    }
+    update_estate($arr_post);
+    header("Location: detailEstate.php?s_no=".$s_no."");
+    exit;
 }
 ?>
 
@@ -59,6 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($_SESSION['err_msg']);
         }
          ?>
+         <h3>매물 정보 수정</h3>
 
     <form action="./updateEstate.php?s_no=<?=$s_no?>" id="frm" method="post">
         <input type="hidden" name="s_no" value="<?=$s_no?>">

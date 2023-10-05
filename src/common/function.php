@@ -103,7 +103,11 @@ function get_user($id)
         . " WHERE "
         . " u_id "
         . " = "
-        . " :u_id ";
+        . " :u_id "
+        . " AND "
+        . " deleted_at IS NULL "
+        . " ; "
+        ;
 
     $prepare = [
         ":u_id" => $id
@@ -155,8 +159,6 @@ function get_user_no($no)
         $conn = null;
     }
 }
-
-
 
 /**
  * 함수명 : login_user
@@ -337,7 +339,138 @@ function insert_estate($param_info, $param_img)
         return $s_no;
     } catch (Exception $e) {
         $conn->rollback();
-        return var_dump($e->getMessage());
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+
+/**
+ * 함수명 : update_estate
+ * 기능 : 매물정보수정
+ * 파라미터 : $param_info | array(건물정보)
+ * 리턴 값 : 성공시 1 | 실패시 에러메세지
+ */
+function update_estate($param_info)
+{
+
+    $sql = " UPDATE "
+        . " s_info "
+        . " SET "
+        . " s_name = :s_name "
+        . " ,s_option = :s_option "
+        . " ,s_type = :s_type "
+        . " ,s_size = :s_size "
+        . " ,s_fl = :s_fl "
+        . " ,s_stai = :s_stai "
+        . " ,p_deposit = :p_deposit "
+        . " ,animal_size = :animal_size "
+        . " ,updated_at = :updated_at "
+        ;
+    if (isset($param_info["p_month"])) {
+        $sql .= " ,p_month = :p_month ";
+    }
+    $sql .= " WHERE "
+        . " s_no = :s_no "
+        . " ; ";
+
+    $prepare = [
+        ":s_name" => $param_info["s_name"]
+        , ":s_option" => $param_info["s_option"]
+        , ":s_type" => $param_info["s_type"]
+        , ":s_size" => intval($param_info["s_size"])
+        , ":s_fl" => intval($param_info["s_fl"])
+        , ":s_stai" => $param_info["s_stai"]
+        , ":p_deposit" => intval($param_info["p_deposit"])
+        , ":animal_size" => isset($param_info["animal_size"]) ? '1' : '0'
+        , ":updated_at" => date("Y-m-d H:i:s")
+        , ":s_no" => intval($param_info["s_no"])
+    ];
+    if (isset($param_info["p_month"])) {
+        $prepare[":p_month"] = intval($param_info["p_month"]);
+    }
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+
+        $option_sql = " UPDATE "
+            . " state_option "
+            . " SET "
+            . " s_parking = :s_parking "
+            . " ,s_ele  = :s_ele "
+            . " WHERE "
+            . " s_no = :s_no "
+            . " ; ";
+
+        $option_prepare = [
+            ":s_parking" => isset($param_info["s_parking"]) ? '1' : '0'
+            , ":s_ele" => isset($param_info["s_ele"]) ? '1' : '0'
+            , ":s_no" => $param_info["s_no"]
+        ];
+        $option_stmt = $conn->prepare($option_sql);
+        $option_stmt->execute($option_prepare);
+
+        $conn->commit();
+        $result_cnt = $stmt->rowCount();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
+/**
+ * 함수명 : delete_estate
+ * 기능 : 매물삭제(delete플래그 타임스탬프로 변경)
+ * 파라미터 : $s_no | int
+ * 리턴 값 : 성공시 1 | 실패시 에러메세지
+ */
+function delete_estate($s_no)
+{
+    $sql = " UPDATE "
+        . " s_info "
+        . " SET "
+        . " deleted_at = :deleted_at "
+        . " WHERE "
+        . " s_no = :s_no "
+        . " ; ";
+
+    $prepare = [
+        ":deleted_at" => date("Y-m-d H:i:s")
+        , ":s_no" => $s_no
+    ];
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+
+        $img_sql = " UPDATE "
+            . " s_img "
+            . " SET "
+            . " deleted_at = :deleted_at "
+            . " WHERE "
+            . " s_no = :s_no "
+            . " ; ";
+
+        $img_prepare = [
+            ":deleted_at" => date("Y-m-d H:i:s")
+            , ":s_no" => $s_no
+        ];
+        $img_stmt = $conn->prepare($img_sql);
+        $img_stmt->execute($img_prepare);
+
+        $conn->commit();
+        $result_cnt = $stmt->rowCount();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
     } finally {
         $conn = null;
     }
@@ -366,6 +499,8 @@ function get_estate_info()
         . " s_img.thumbnail "
         . " = "
         . " :thumbnail "
+        . " AND "
+        . " s_info.deleted_at IS NULL "
         . " ORDER BY "
         . " s_img.updated_at "
         . " DESC "

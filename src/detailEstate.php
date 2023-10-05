@@ -17,6 +17,7 @@ if ($http_method == "GET") {
 
 } else {
     header("Location: main.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -54,6 +55,9 @@ if ($http_method == "GET") {
 
         <?php if($result['0']['u_no'] == $u_no['u_no']) {
         echo '<a href="./updateEstate.php?s_no='.$s_no.'">매물수정하기</a>';
+    } ?>
+        <?php if($result['0']['u_no'] == $u_no['u_no']) {
+        echo '<a href="./deleteEstate.php?s_no='.$s_no.'">매물삭제하기</a>';
     } ?>
 
         <h1 class="dark:text-white">건물 정보</h1>

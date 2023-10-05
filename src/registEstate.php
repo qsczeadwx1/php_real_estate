@@ -49,6 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: registEstate.php");
         exit;
     }
+    if($arr_post['p_month'] == '' || $arr_post['p_month'] == 0) {
+        $arr_post['p_month'] = NULL;
+    }
 
     // 파일 개수 확인
     $img_count = count($_FILES['estate_img']['name']);

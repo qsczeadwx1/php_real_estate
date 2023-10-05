@@ -41,7 +41,7 @@ CREATE TABLE `s_info` (
     `s_option` ENUM('0', '1', '2', '3', '4') NOT NULL, -- 아파트 0, 단독주택 1, 오피스텔2, 빌라3, 원룸4
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `deleted_at` TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
     CONSTRAINT `pk_s_info_s_no_u_no` PRIMARY KEY(`s_no`,`u_no`)
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE `s_img` (
     `thumbnail` ENUM('0','1') DEFAULT('0') NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `deleted_at` TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
     CONSTRAINT `pk_s_img_p_no_s_no` PRIMARY KEY(`p_no`,`s_no`)
 );
 
