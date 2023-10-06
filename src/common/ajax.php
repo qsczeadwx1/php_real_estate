@@ -29,7 +29,9 @@ $sql = " SELECT "
     . " WHERE "
     . " thumbnail"
     . " = "
-    . " :thumbnail ";
+    . " :thumbnail "
+    . " AND "
+    . " s_info.deleted_at IS NULL ";
 
 if (!empty($s_option)) {
     // 들어온 배열 사이에 ,로 나눈 다음 각각 값에 ''를 붙여주기

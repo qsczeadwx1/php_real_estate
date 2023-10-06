@@ -747,6 +747,8 @@ function get_estate_info_json()
         . " s_img.thumbnail "
         . " = "
         . " :thumbnail "
+        . " AND "
+        . " s_info.deleted_at IS NULL "
         ;
 
     $prepare = [
