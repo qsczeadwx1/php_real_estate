@@ -1,5 +1,7 @@
 // 공원 마커 변수
 let parkMarkers = [];
+// 지도의 상태 저장하는 변수(일반로드뷰, 스카이뷰)
+var mapTypeId;
 
 // div 생성하는 함수
 function createInfoDiv(value) {
@@ -170,13 +172,40 @@ function displayData(data) {
 
     sidebar.appendChild(info);
   });
-  //   지도 생성 및 마커 찍기(기본 중심좌표 대구시청)
+
+  // 지도 생성 및 마커 찍기(기본 중심좌표 대구시청)
+  // var container = document.getElementById("map");
+  //   var options = {
+  //     center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
+  //     level: 8,
+  //     mapTypeId: kakao.maps.MapTypeId.ROADMAP,
+  //   };
+  //   var map = new kakao.maps.Map(container, options);
+  // if(mapDefault || options.mapTypeId == 1) {
+  //   var container = document.getElementById("map");
+  //   var options = {
+  //     center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
+  //     level: 8,
+  //     mapTypeId: kakao.maps.MapTypeId.ROADMAP,
+  //   };
+  //   console.log(options.mapTypeId);
+  //   var map = new kakao.maps.Map(container, options);
+  //   mapDefault = false;
+  // } else if (options.mapTypeId == 2) {
+  //   var container = document.getElementById("map");
+  //   var options = {
+  //     center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
+  //     level: 8,
+  //     mapTypeId: kakao.maps.MapTypeId.SKYVIEW,
+  //   };
+  //   var map = new kakao.maps.Map(container, options);
+  // }
   var container = document.getElementById("map");
   var options = {
     center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
     level: 8,
+    mapTypeId: mapTypeId,
   };
-
   var map = new kakao.maps.Map(container, options);
 
   //   클러스터 설정
@@ -184,6 +213,20 @@ function displayData(data) {
     map: map,
     averageCenter: true,
     minLevel: 8,
+  });
+
+  // 지도 우측하단 거리 일반 / 스카이뷰 선택 토글
+  var mapTypeControl = new kakao.maps.MapTypeControl();
+  map.addControl(mapTypeControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+
+  // 일반 / 스카이뷰 토글 선택시에, 그에 맞는 maptypeid가 설정
+  // 1은 일반지도, 3은 스카이뷰
+  kakao.maps.event.addListener(map, "maptypeid_changed", function () {
+    if (map.getMapTypeId() == 1) {
+      mapTypeId = 1;
+    } else if(map.getMapTypeId() == 3) {
+      mapTypeId = 3;
+    }
   });
 
   // 건물 위치에 마커 생성 및 인포윈도우 추가

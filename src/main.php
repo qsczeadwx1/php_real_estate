@@ -14,7 +14,6 @@ $estate_info = get_estate_info();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>펫방</title>
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/tiny-slider.css" />
     <link rel="stylesheet" href="./css/aos.css" />
@@ -25,7 +24,7 @@ $estate_info = get_estate_info();
         .search {
             text-align: center;
             border: 1px solid black;
-            height: 150px;
+            height: 200px;
             background-color: aqua;
             margin: 20px;
         }
@@ -41,84 +40,116 @@ $estate_info = get_estate_info();
 <body>
     <?php include_once("./layout/header.php"); ?>
     <div class="search">
-    <h1 style="margin-top:10px;">펫 방</h1>
-    <form action="./searchResult.php" method="GET">
-    <input type="text" name="search" placeholder="주소나 지하철명으로 검색해 주세요">
-    <button>Search</button>
-    </form>
+        <h1 style="margin-top:10px;">Pet bang</h1>
+        <form action="./searchResult.php" method="GET">
+            <input type="text" name="search" placeholder="주소나 지하철명으로 검색해 주세요">
+            <button>검색</button>
+            <div id="search_checkbox" style="margin-top: 5px;" >
+                <div id="s_option">
+                    <span style="font-weight:900;">건물형태</span>
+                    <label for="s_option_1">| 아파트 </label>
+                    <input type="checkbox" name="s_option[]" id="s_option_1" class="s_option" value="0">
+                    <label for="s_option_2">| 단독주택 </label>
+                    <input type="checkbox" name="s_option[]" id="s_option_2" class="s_option" value="1">
+                    <label for="s_option_3">| 오피스텔</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_3" class="s_option" value="2">
+                    <label for="s_option_4">| 빌라</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_4" class="s_option" value="3">
+                    <label for="s_option_5">| 원룸</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_5" class="s_option" value="4">
+                </div>
+                <div id="s_type">
+                    <span style="font-weight:900;">거래유형</span>
+                    <label for="s_type_1">| 매매</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_1" class="s_type" value="0">
+                    <label for="s_type_2">| 전세</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_2" class="s_type" value="1">
+                    <label for="s_type_3">| 월세</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_3" class="s_type" value="2">
+                </div>
+                <div id="state_option">
+                    <span style="font-weight:900;">건물옵션</span>
+                    <label for="state_option_1">| 주차가능여부</label>
+                    <input type="checkbox" name="state_option[]" id="state_option_1" value="s_parking">
+                    <label for="state_option_2">| 엘리베이터여부</label>
+                    <input type="checkbox" name="state_option[]" id="state_option_2" value="s_ele">
+                </div>
+            </div>
+        </form>
     </div>
     <div style="margin-left:20px;">
         <h2>최근 등록된 매물</h2>
         <a href="./map.php" style="text-align:right;"><button>지도에서 매물 검색</button></a>
     </div>
     <div class="content">
-    <div class="row">
-        <div class="col-12">
-            <div class="property-slider-wrap">
-                <div class="property-slider">
-            <?php
-                $i=1;
-                foreach ($estate_info as $val) {
-            ?>
-                    <div class="property-item">
-                        <a href="./detailEstate.php?s_no=<?=$val['s_no']?>" class="img">
-                            <img src="./upload/img_<?=$i; $i++?>.jpg" alt="Image" class="img-fluid" />
-                        </a>
+        <div class="row">
+            <div class="col-12">
+                <div class="property-slider-wrap">
+                    <div class="property-slider">
+                        <?php
+                        $i = 1;
+                        foreach ($estate_info as $val) {
+                        ?>
+                            <div class="property-item">
+                                <a href="./detailEstate.php?s_no=<?= $val['s_no'] ?>" class="img">
+                                    <img src="./upload/img_<?= $i;
+                                                            $i++ ?>.jpg" alt="Image" class="img-fluid" />
+                                </a>
 
-                        <div class="property-content">
-                            <div class="price mb-2"><span><?=$val['s_name']?></span></div>
-                            <div>
-                                <span class="d-block mb-2 text-black-50"><?=$val['s_add']?></span>
-                                <span class="city d-block mb-3"><?=number_format($val['p_deposit']);?>
-                                <?=isset($val['p_month']) ? ' / '.$val['p_month'] : null ?>
-                                </span>
-                                                                
-                                <div class="specs d-flex mb-4">
-                                    <span class="d-block d-flex align-items-center me-3">
-                                        <span class="icon-building me-2"></span>
-                                        <span class="caption"><?php
-                                        switch ($val['s_option']) {
-                                            case '0':
-                                                echo '아파트';
-                                                break;
-                                            case '1':
-                                                echo '단독주택';
-                                                break;
-                                            case '2':
-                                                echo '오피스텔';
-                                                break;
-                                            case '3':
-                                                echo '빌라';
-                                                break;
-                                            case '4':
-                                                echo '원룸';
-                                                break;
-                                            
-                                            default:
-                                                break;
-                                        }?></span>
-                                    </span>
-                                    <span class="d-block d-flex align-items-center">
-                                        <span class="fa-solid fa-dog me-2"></span>
-                                        <span class="caption">대형동물&nbsp;</span>
-                                            <strong><?=$val['animal_size'] == 1 ? 'O' : 'X'?></strong>
-                                    </span>
+                                <div class="property-content">
+                                    <div class="price mb-2"><span><?= $val['s_name'] ?></span></div>
+                                    <div>
+                                        <span class="d-block mb-2 text-black-50"><?= $val['s_add'] ?></span>
+                                        <span class="city d-block mb-3"><?= number_format($val['p_deposit']); ?>
+                                            <?= isset($val['p_month']) ? ' / ' . $val['p_month'] : null ?>
+                                        </span>
+
+                                        <div class="specs d-flex mb-4">
+                                            <span class="d-block d-flex align-items-center me-3">
+                                                <span class="icon-building me-2"></span>
+                                                <span class="caption"><?php
+                                                                        switch ($val['s_option']) {
+                                                                            case '0':
+                                                                                echo '아파트';
+                                                                                break;
+                                                                            case '1':
+                                                                                echo '단독주택';
+                                                                                break;
+                                                                            case '2':
+                                                                                echo '오피스텔';
+                                                                                break;
+                                                                            case '3':
+                                                                                echo '빌라';
+                                                                                break;
+                                                                            case '4':
+                                                                                echo '원룸';
+                                                                                break;
+
+                                                                            default:
+                                                                                break;
+                                                                        } ?></span>
+                                            </span>
+                                            <span class="d-block d-flex align-items-center">
+                                                <span class="fa-solid fa-dog me-2"></span>
+                                                <span class="caption">대형동물&nbsp;</span>
+                                                <strong><?= $val['animal_size'] == 1 ? 'O' : 'X' ?></strong>
+                                            </span>
+                                        </div>
+
+                                        <a href="./detailEstate.php?s_no=<?= $val['s_no'] ?>" class="btn btn-primary py-2 px-3">매물보러가기</a>
+                                    </div>
                                 </div>
-                    
-                                <a href="./detailEstate.php?s_no=<?=$val['s_no']?>" class="btn btn-primary py-2 px-3">매물보러가기</a>
                             </div>
-                        </div>
-                    </div>
-                    <?php } ?>
+                        <?php } ?>
 
-                </div>
-                <div id="property-nav" class="controls" tabindex="0" aria-label="Carousel Navigation">
-                    <span class="prev" data-controls="prev" aria-controls="property" tabindex="-1">이전</span>
-                    <span class="next" data-controls="next" aria-controls="property" tabindex="-1">다음</span>
+                    </div>
+                    <div id="property-nav" class="controls" tabindex="0" aria-label="Carousel Navigation">
+                        <span class="prev" data-controls="prev" aria-controls="property" tabindex="-1">이전</span>
+                        <span class="next" data-controls="next" aria-controls="property" tabindex="-1">다음</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </div>
 

@@ -36,3 +36,12 @@
 .error_message {
     color: rgb(250, 73, 73);
 }
+
+input { 
+    padding:5px;
+    margin:2px;
+}
+
+a {
+    text-decoration: none;
+}

@@ -4,12 +4,10 @@
 
     session_start();
     
-if($_SERVER["REQUEST_METHOD"] == "GET") {
-    $search = $_GET['search'];
-    $estate_info = get_s_info_search($search);
+if($_SERVER["REQUEST_METHOD"] == "GET") {   
+    $arr_get = $_GET;
+    $estate_info = get_s_info_search($arr_get);
     }
-
-
 ?>
 
 
@@ -30,7 +28,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
         .search {
             text-align: center;
             border: 1px solid black;
-            height: 150px;
+            height: 200px;
             background-color: aqua;
             margin: 20px;
         }
@@ -47,11 +45,42 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
 <?php include_once("./layout/header.php"); ?>
 
 <div class="search">
-    <h1>펫 방</h1>
+<h1 style="margin-top:10px;">Pet bang</h1>
     <form action="./searchResult.php" method="GET">
-    <input type="text" name="search" placeholder="주소나 지하철명으로 검색해 주세요">
-    <button>Search</button>
-    </form>
+            <input type="text" name="search" placeholder="주소나 지하철명으로 검색해 주세요">
+            <button>검색</button>
+            <div id="search_checkbox" style="margin-top: 5px;" >
+                <div id="s_option">
+                    <span style="font-weight:900;">건물형태</span>
+                    <label for="s_option_1">| 아파트 </label>
+                    <input type="checkbox" name="s_option[]" id="s_option_1" class="s_option" value="0">
+                    <label for="s_option_2">| 단독주택 </label>
+                    <input type="checkbox" name="s_option[]" id="s_option_2" class="s_option" value="1">
+                    <label for="s_option_3">| 오피스텔</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_3" class="s_option" value="2">
+                    <label for="s_option_4">| 빌라</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_4" class="s_option" value="3">
+                    <label for="s_option_5">| 원룸</label>
+                    <input type="checkbox" name="s_option[]" id="s_option_5" class="s_option" value="4">
+                </div>
+                <div id="s_type">
+                    <span style="font-weight:900;">거래유형</span>
+                    <label for="s_type_1">| 매매</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_1" class="s_type" value="0">
+                    <label for="s_type_2">| 전세</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_2" class="s_type" value="1">
+                    <label for="s_type_3">| 월세</label>
+                    <input type="checkbox" name="s_type[]" id="s_type_3" class="s_type" value="2">
+                </div>
+                <div id="state_option">
+                    <span style="font-weight:900;">건물옵션</span>
+                    <label for="state_option_1">| 주차가능여부</label>
+                    <input type="checkbox" name="state_option[]" id="state_option_1" value="s_parking">
+                    <label for="state_option_2">| 엘리베이터여부</label>
+                    <input type="checkbox" name="state_option[]" id="state_option_2" value="s_ele">
+                </div>
+            </div>
+        </form>
     </div>
 
 

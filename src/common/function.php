@@ -475,6 +475,78 @@ function delete_estate($s_no)
         $conn = null;
     }
 }
+/**
+ * 함수명 : delete_user
+ * 기능 : 유저삭제 및 유저가 올린 매물 삭제(delete플래그 타임스탬프로 변경)
+ * 파라미터 : $u_no | int
+ * 리턴 값 : 성공시 1 | 실패시 에러메세지
+ */
+function delete_user($u_no)
+{
+    $sql = " UPDATE "
+        . " user "
+        . " SET "
+        . " deleted_at = :deleted_at "
+        . " WHERE "
+        . " u_no = :u_no "
+        . " ; ";
+
+    $prepare = [
+        ":deleted_at" => date("Y-m-d H:i:s")
+        , ":u_no" => $u_no
+    ];
+    $s_info = get_s_info_indiv($u_no);
+
+    $conn = null;
+    try {
+        db_conn($conn);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($prepare);
+
+        $s_info_sql = " UPDATE "
+                    . " s_info "
+                    . " SET "
+                    . " deleted_at = :deleted_at "
+                    . " WHERE "
+                    . " s_no = :s_no "
+                    . " ; ";
+        for($i=0; $i < count($s_info); $i++) {
+            $s_info_prepare[$i] = [
+                ":deleted_at" => date("Y-m-d H:i:s")
+                , ":s_no" => $s_info[$i]['s_no']
+            ];
+            $s_info_stmt[$i] = $conn->prepare($s_info_sql);
+            $s_info_stmt[$i]->execute($s_info_prepare[$i]);
+        }
+        
+        
+        $img_sql = " UPDATE "
+                . " s_img "
+                . " SET "
+                . " deleted_at = :deleted_at "
+                . " WHERE "
+                . " s_no = :s_no "
+                . " ; ";
+        for($i=0; $i < count($s_info); $i++) {
+            $img_prepare[$i] = [
+                ":deleted_at" => date("Y-m-d H:i:s")
+                , ":s_no" => $s_info[$i]['s_no']
+            ];
+            $img_stmt[$i] = $conn->prepare($img_sql);
+            $img_stmt[$i]->execute($img_prepare[$i]);
+        }
+
+        $conn->commit();
+        $result_cnt = $stmt->rowCount();
+        return $result_cnt;
+    } catch (Exception $e) {
+        $conn->rollback();
+        return $e->getMessage();
+    } finally {
+        $conn = null;
+    }
+}
 
 /**
  * 함수명 : get_estate_info
@@ -625,12 +697,12 @@ function get_s_no_info($param_int)
 
 /**
  * 함수명 : get_s_info_search
- * 기능 : 파라미터로 받은 s_no의 정보를 불러옴
- * 파라미터 : $param_str | string
+ * 기능 : 파라미터로 받은 정보에 맞는 매물 전부 출력
+ * 파라미터 : $param_arr | array
  * 리턴 값 : $result | array
  */
-    function get_s_info_search($param_str) {
-
+    function get_s_info_search($param_arr) {
+        
         $sql = " SELECT "
         . " * "
         . " FROM "
@@ -647,18 +719,37 @@ function get_s_no_info($param_int)
         . " = "
         . " :thumbnail "
         . " AND "
-        . " (s_stai "
-        . " LIKE "
-        . " :search "
+        . " (s_stai LIKE :search "
         . " OR "
-        . " s_add "
-        . " LIKE "
-        . " :search2); "
+        . " s_add LIKE :search2) "
         ;
 
+        if (!empty($param_arr['s_option'])) {
+            // 들어온 배열 사이에 ,로 나눈 다음 각각 값에 ''를 붙여주기
+            // 정수로 넣으면 값이 제대로 안나옴
+            $s_option_string = implode(',', array_map(function ($value) {
+                return "'$value'";
+            }, $param_arr['s_option']));
+            $sql .= " AND s_info.s_option IN (" . $s_option_string . ")";
+        }
+        if (!empty($param_arr['s_type'])) {
+            $s_type_string = implode(',', array_map(function ($value) {
+                return "'$value'";
+            }, $param_arr['s_type']));
+            $sql .= " AND s_info.s_type IN (" . $s_type_string . ")";
+        }
+        if (!empty($param_arr['state_option']) && in_array('s_parking', $param_arr['state_option'])) {
+            $sql .= " AND state_option.s_parking = '1'";
+        }
+        if (!empty($param_arr['state_option']) && in_array('s_ele', $param_arr['state_option'])) {
+            $sql .= " AND state_option.s_ele = '1'";
+        }
+
+        $sql .= " ; ";
+
         $prepare = [
-            ":search" => "%".$param_str."%"
-            ,":search2" => "%".$param_str."%"
+            ":search" => "%".$param_arr['search']."%"
+            ,":search2" => "%".$param_arr['search']."%"
             ,":thumbnail" => '1'
         ];
 

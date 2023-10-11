@@ -152,22 +152,6 @@ function valiBname() {
     }
 }
 
-// 매매 옵션이 선택되면 input을 비활성화하고, 그렇지 않으면 활성화합니다.
-document.getElementById('s_type').addEventListener('change', function() {
-    var selectedValue = this.value;
-    var pMonthInput = document.getElementById('p_month');
-    
-    
-    if (selectedValue == "0") {
-        pMonthInput.disabled = true;
-        pMonthInput.value = "";
-    } else {
-        pMonthInput.disabled = false;
-    }
-});
-
-
-
 
 
 
