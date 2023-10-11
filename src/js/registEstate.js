@@ -1,3 +1,16 @@
+const typeSelect = document.getElementById('s_type');
+const monthInput = document.getElementById('p_month');
+
+// 월세 선택 시 이벤트 리스너 추가
+typeSelect.addEventListener('change', () => {
+    if (typeSelect.value === '2') {
+        monthInput.removeAttribute('disabled'); // 월세를 선택하면 disabled 속성을 제거
+    } else {
+        monthInput.value = null
+        monthInput.setAttribute('disabled', 'disabled'); // 다른 옵션을 선택하면 다시 disabled 속성을 추가
+    }
+});
+
 // 다음 주소 api실행
 function sample6_execDaumPostcode() {
     new daum.Postcode({

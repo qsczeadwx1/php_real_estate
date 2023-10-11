@@ -160,7 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="number" name="p_deposit" id="p_deposit">
         <br>
         <label for="p_month">월세</label>
-        <input type="number" name="p_month" id="p_month">
+        <input type="number" name="p_month" id="p_month" disabled>
         <br>
         <label for="animal_size">대형동물 가능여부</label>
         <input type="checkbox" name="animal_size" id="animal_size" value="1">
@@ -173,9 +173,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button>매물 올리기</button>
 
     </form>
-
-
-
 
     <?php include_once("./layout/footer.php"); ?>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c3af763d949f96c4cc8cca5e5762703f&libraries=services,clusterer,drawing"></script>

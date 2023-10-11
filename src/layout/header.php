@@ -1,5 +1,6 @@
 <div class="header">
-    <span>로고</span>
+    <!-- <span>로고</span> -->
+    <a href="./main.php" style="font-size:2rem">Petbang</a>
     <a href="./main.php">메인</a>
     <a href="./map.php">지도</a>
     
@@ -24,5 +25,5 @@
             <!-- <a href='/user/'>마이페이지</a> -->
             <a href='./logout.php'>로그아웃</a>
         <?php } ?>
-    </div>
     </span>
+    </div>

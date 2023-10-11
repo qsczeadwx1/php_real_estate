@@ -235,11 +235,16 @@ function displayData(data) {
     map.setCenter(newCenter); // 지도의 중심을 변경
   });
 
-
-//  이하 카카오 키워드 검색으로 공원 검색해서 마커찍는 로직
+  //  이하 카카오 키워드 검색으로 공원 검색해서 마커찍는 로직
   let getpark = document.getElementById("getpark");
 
   getpark.addEventListener("click", () => {
+    // 이미 찍힌 공원 마커들을 지도에서 삭제
+    for (let i = 0; i < parkMarkers.length; i++) {
+      parkMarkers[i].setMap(null);
+    }
+    parkMarkers = []; // 공원 마커 배열 초기화
+
     // 선택한 구,군에 맞는 위도 경도 받아옴
     var gu = document.getElementById("option").value;
     const { lat, lng } = selectRegion(gu);
@@ -252,16 +257,10 @@ function displayData(data) {
 
     let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-    // 이미 찍힌 공원 마커들을 지도에서 삭제
-    for (let i = 0; i < parkMarkers.length; i++) {
-      parkMarkers[i].setMap(null);
-    }
-    parkMarkers = []; // 공원 마커 배열 초기화
-
     var callback = function (result, status) {
       if (status === kakao.maps.services.Status.OK) {
         // 키워드 검색으로 받아온 데이터로 지도에 마커를 찍고
-        // 한번 더 버튼을 눌렀을때 중복된 마커가 찍히지 않도록 
+        // 한번 더 버튼을 눌렀을때 중복된 마커가 찍히지 않도록
         // parkMarkers에 저장
         for (let i = 0; i < result.length; i++) {
           const place = result[i];
@@ -269,6 +268,20 @@ function displayData(data) {
           const parkMarker = new kakao.maps.Marker({
             position: markerPosition,
             image: markerImage,
+          });
+          // 인포윈도우 생성 및 공원 이름 추가
+          const infowindow = new kakao.maps.InfoWindow({
+            content:
+              '<div style="padding-left:2px;">' + place.place_name + "</div>",
+            removable: true,
+          });
+          // 마커에 마우스 오버 시 인포윈도우 표시
+          kakao.maps.event.addListener(parkMarker, "mouseover", function () {
+            infowindow.open(map, parkMarker);
+          });
+          // 마커에 마우스 아웃 시 인포윈도우 숨김
+          kakao.maps.event.addListener(parkMarker, "mouseout", function () {
+            infowindow.close();
           });
           parkMarker.setMap(map); // 마커를 지도에 추가
           parkMarkers.push(parkMarker);

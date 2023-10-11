@@ -25,7 +25,7 @@ function insert_user($param_arr)
         $sql .= " ,seller_license "
             . " ,b_name ";
     } else if (isset($param_arr["animal_size"])) {
-        $sql .= ",animal_size";
+        $sql .= " ,animal_size ";
     }
     $sql .= " ) "
         . " VALUES( "
@@ -945,7 +945,7 @@ function change_user_info($param_arr)
         . " SET "
         . " email = :email "
         . " ,phone_no = :phone_no "
-        . " ,updated_at = :updated_at"
+        . " ,updated_at = :updated_at "
         . " WHERE "
         . " u_id "
         . " = "

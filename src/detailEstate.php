@@ -8,7 +8,7 @@ if ($http_method == "GET") {
     $s_no = $_GET['s_no'];
     $result = get_s_no_info($s_no);
     $user_info = get_user_no($result['0']['u_no']);
-    $u_no = get_user($_SESSION['u_id']);
+    $user_no['u_no'] = [];
 
     if (isset($_SESSION['u_id'])) {
         $user_no = get_user($_SESSION['u_id']);
@@ -53,10 +53,10 @@ if ($http_method == "GET") {
         <br>
         <br>
 
-        <?php if($result['0']['u_no'] == $u_no['u_no']) {
+        <?php if($result['0']['u_no'] == $user_no['u_no']) {
         echo '<a href="./updateEstate.php?s_no='.$s_no.'">매물수정하기</a>';
     } ?>
-        <?php if($result['0']['u_no'] == $u_no['u_no']) {
+        <?php if($result['0']['u_no'] == $user_no['u_no']) {
         echo '<a href="./deleteEstate.php?s_no='.$s_no.'">매물삭제하기</a>';
     } ?>
 
@@ -192,17 +192,6 @@ if ($http_method == "GET") {
             btn3.addEventListener("click", () => {
                 window.scrollTo(0, document.body.scrollHeight);
             });
-
-            // var empty_heart = document.getElementById('empty_heart');
-            // var full_heart = document.getElementById('full_heart');
-            // empty_heart.addEventListener('click', () => {
-            //     empty_heart.style.display = 'none';
-            //     full_heart.style.display = '';
-            // });
-            // full_heart.addEventListener('click', () => {
-            //     full_heart.style.display = 'none';
-            //     empty_heart.style.display = '';
-            // });
         </script>
 
 </body>
