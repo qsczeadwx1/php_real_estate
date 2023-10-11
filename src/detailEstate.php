@@ -62,11 +62,14 @@ if ($http_method == "GET") {
 
         <h1 class="dark:text-white">건물 정보</h1>
         <div style="margin-left: 30px">
+            <?php if((isset($_SESSION['u_id']) && !isset($_SESSION['seller_license'])) || !isset($_SESSION['u_id'])) 
+            { ?>
             <form action="./jjim.php" method="POST">
                 <button class="icon-heart-empty wish" id="empty_heart" style="<?= isset($wishlist) ? 'display:none;' : ''; ?>; background: none; border: none; cursor:pointer;"></button>
                 <button class="icon-heart wish" id="full_heart" style="<?= isset($wishlist) ? '' : 'display:none;'; ?>; background: none; border: none; cursor:pointer;"></button>
                 <input type="hidden" name="s_no" value="<?= isset($result['0']['s_no']) ? $result['0']['s_no'] : '' ?>">
             </form>
+            <?php } ?>
 
             <div class="contents">
                 건물 이름 : <?= $result['0']['s_name'] ?>

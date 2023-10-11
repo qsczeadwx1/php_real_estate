@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="checkbox" name="s_ele" id="s_ele" value="1" <?=$result[0]['s_ele'] == 1 ? 'checked' : '' ?>>
         <br>
         <button>매물 올리기</button>
-
+        <a href="./detailEstate.php?s_no=<?=$s_no?>"><button type="button">취소</button></a>
     </form>
 
 

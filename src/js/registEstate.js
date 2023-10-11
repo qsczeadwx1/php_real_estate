@@ -10,7 +10,6 @@ typeSelect.addEventListener('change', () => {
         monthInput.setAttribute('disabled', 'disabled'); // 다른 옵션을 선택하면 다시 disabled 속성을 추가
     }
 });
-
 // 다음 주소 api실행
 function sample6_execDaumPostcode() {
     new daum.Postcode({

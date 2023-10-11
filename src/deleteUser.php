@@ -14,8 +14,6 @@ if ($http_method == "GET") {
     $arr_get = $_GET;
     $id = $_GET['id'];
     $get_user = get_user($id);
-    var_dump(count(get_s_info_indiv($get_user['u_no'])));
-    var_dump(get_s_info_indiv($get_user['u_no'])['0']['s_no']);
 } else if ($http_method == "POST") {
     $arr_post = $_POST;
     $id = $_POST['id'];
@@ -48,9 +46,8 @@ if ($http_method == "GET") {
     <form action="./deleteUser.php" method="POST">
         <button>삭제</button>
         <input type="hidden" name="id" value="<?= $arr_get['id'] ?>">
+        <a href="./userDetail.php?id=<?= $arr_get['id'] ?>"><button type="button">취소</button></a>
     </form>
-    <a href="./userDetail.php?id=<?= $arr_get['id'] ?>"><button>취소</button></a>
-    </div>
 
 
     <?php include_once("./layout/footer.php"); ?>
