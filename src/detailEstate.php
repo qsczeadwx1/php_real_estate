@@ -65,6 +65,9 @@ if ($http_method == "GET") {
             <?php if((isset($_SESSION['u_id']) && !isset($_SESSION['seller_license'])) || !isset($_SESSION['u_id'])) 
             { ?>
             <form action="./jjim.php" method="POST">
+                <?php if(!isset($wishlist)) { echo '<span style="font-weight:900; color:red;">찜하기</span>'; } 
+                    else if(isset($wishlist)) { echo '<span style="font-weight:900; color:red;">찜취소</span>'; }
+                ?>
                 <button class="icon-heart-empty wish" id="empty_heart" style="<?= isset($wishlist) ? 'display:none;' : ''; ?>; background: none; border: none; cursor:pointer;"></button>
                 <button class="icon-heart wish" id="full_heart" style="<?= isset($wishlist) ? '' : 'display:none;'; ?>; background: none; border: none; cursor:pointer;"></button>
                 <input type="hidden" name="s_no" value="<?= isset($result['0']['s_no']) ? $result['0']['s_no'] : '' ?>">
