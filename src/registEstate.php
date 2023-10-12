@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form action="./registEstate.php" id="frm" method="post" enctype="multipart/form-data">
         <label for="estate_img">건물사진</label>
         <input type="file" name="estate_img[]" id="estate_img" multiple>
-        <br>
+        <div style="color:red; font-size:14px;">건물 사진은 5 ~ 10장 사이로 선택해 주세요.</div>
         <label for="s_name">건물이름</label>
         <input type="text" name="s_name" id="s_name">
         <br>
@@ -151,14 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="s_add">주소</label>
         <input type="text" id="sample6_address" name="s_add" placeholder="'주소 찾기' 버튼을 눌러서 주소를 입력하세요" readonly required>
         <button type="button" onclick="sample6_execDaumPostcode()">주소 찾기</button>
-        <br>
-        <br>
+        <div style="color:red; font-size:14px;">주소를 입력하신 후에 주소가 들어간 입력창을 클릭하신 뒤에 진행해 주세요.</div>
         <input type="hidden" name="s_log" id="s_log">
         <input type="hidden" name="s_lat" id="s_lat">
 
         <label for="p_deposit">매매 / 전세금</label>
         <input type="number" name="p_deposit" id="p_deposit">
-        <br>
+        <div style="color:red; font-size:14px;">금액은 만 원 단위로 입력해주세요.</div>
         <label for="p_month">월세</label>
         <input type="number" name="p_month" id="p_month" disabled>
         <br>
