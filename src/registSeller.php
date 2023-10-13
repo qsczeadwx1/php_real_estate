@@ -18,7 +18,7 @@ if(isset($_SESSION["u_id"])) {
             header("Location: registCmp.php");
             exit();
         } else {
-            $_SESSION['error_message'] = "회원가입에 실패했습니다. 다시 작성해 주세요";
+            $_SESSION['err_msg'] = "회원가입에 실패했습니다. 다시 작성해 주세요";
             header("Location: registSeller.php");
             exit();
         }
@@ -40,6 +40,13 @@ if(isset($_SESSION["u_id"])) {
 </head>
 <body>
     <?php include_once("./layout/header.php"); ?>
+    <?php 
+        if(isset($_SESSION['err_msg'])) {
+        echo "<p style='color:red;'>" . $_SESSION['err_msg'] . "</p>";
+        unset($_SESSION['err_msg']);
+        }
+         ?>
+
     <form action="./registSeller.php" method="post">
         <label for="id">아이디</label>
         <input type="text" id="id" name="id" required>
@@ -84,7 +91,7 @@ if(isset($_SESSION["u_id"])) {
         <br>
 
         <label for="seller_license">공인중개사 라이센스</label>
-        <input type="text" id="seller_license" name="seller_license">
+        <input type="text" id="seller_license" name="seller_license" placeholder="아무숫자나 입력하셔도 됩니다.">
         <br>
         <br>
         <!-- api -->

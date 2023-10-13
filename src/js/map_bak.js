@@ -1,7 +1,23 @@
 // 공원 마커 변수
 let parkMarkers = [];
-// 지도의 상태 저장하는 변수(일반로드뷰, 스카이뷰)
-var mapTypeId;
+
+// 지도 생성 및 마커 찍기(기본 중심좌표 대구시청)
+var container = document.getElementById("map");
+var options = {
+  center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
+  level: 8,
+};
+var map = new kakao.maps.Map(container, options);
+
+var markers = [];
+var marker = [];
+
+//   클러스터 설정
+var clusterer = new kakao.maps.MarkerClusterer({
+  map: map,
+  averageCenter: true,
+  minLevel: 8,
+});
 
 // div 생성하는 함수
 function createInfoDiv(value) {
@@ -173,40 +189,11 @@ function displayData(data) {
     sidebar.appendChild(info);
   });
 
-  // 지도 생성 및 마커 찍기(기본 중심좌표 대구시청)
-  var container = document.getElementById("map");
-  var options = {
-    center: new kakao.maps.LatLng(35.8708274319876, 128.604605757621),
-    level: 8,
-    mapTypeId: mapTypeId,
-  };
-  var map = new kakao.maps.Map(container, options);
-
-  //   클러스터 설정
-  var clusterer = new kakao.maps.MarkerClusterer({
-    map: map,
-    averageCenter: true,
-    minLevel: 8,
-  });
-
-  // 지도 우측하단 거리 일반 / 스카이뷰 선택 토글
-  var mapTypeControl = new kakao.maps.MapTypeControl();
-  map.addControl(mapTypeControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
-
-  // 일반 / 스카이뷰 토글 선택시에, 그에 맞는 maptypeid가 설정
-  // 1은 일반지도, 3은 스카이뷰
-  kakao.maps.event.addListener(map, "maptypeid_changed", function () {
-    if (map.getMapTypeId() == 1) {
-      mapTypeId = 1;
-    } else if(map.getMapTypeId() == 3) {
-      mapTypeId = 3;
-    }
-  });
-
   // 건물 위치에 마커 생성 및 인포윈도우 추가
-  var markers = data.map((item, i) => {
+
+  markers = data.map((item, i) => {
     var markerPosition = new kakao.maps.LatLng(item.s_log, item.s_lat);
-    var marker = new kakao.maps.Marker({
+    marker = new kakao.maps.Marker({
       position: markerPosition,
     });
 
@@ -241,8 +228,6 @@ function displayData(data) {
 
     return marker;
   });
-
-  clusterer.addMarkers(markers);
 
   //   구 선택하면 지도 중심이 그쪽으로 바뀜
   document.getElementById("option").addEventListener("change", function () {
@@ -322,10 +307,15 @@ function displayData(data) {
 // 사이드바에 건물 이미지와 정보를 출력
 // 지도에는 모든 건물의 좌표를 받아 마커를 찍음
 addEventListener("DOMContentLoaded", () => {
-    fetch("./common/api.php")
+  // 지도 우측하단 거리 일반 / 스카이뷰 선택 토글
+  var mapTypeControl = new kakao.maps.MapTypeControl();
+  map.addControl(mapTypeControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+
+  fetch("./common/api.php")
     .then((response) => response.json())
     .then((data) => {
       displayData(data);
+      
     })
     .catch((error) => {
       console.error("Error", error);
@@ -358,7 +348,6 @@ function searchEstate() {
   document.querySelectorAll("#state_option input:checked").forEach((input) => {
     state_option_array.push(input.value);
   });
-
   // php로 데이터 넘김
   fetch("./common/ajax.php", {
     method: "POST",
@@ -375,7 +364,13 @@ function searchEstate() {
     .then((response) => response.json())
     // 여기서부터 지도로직
     .then((data) => {
+      // 새로운 데이터를 받아올 때, 기존 마커들을 제거
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
+      markers = []; // 마커 배열 초기화
       displayData(data.results);
+      clusterer.addMarkers(markers);
     })
     .catch((error) => {
       console.error("Error", error);
